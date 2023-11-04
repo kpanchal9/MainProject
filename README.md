@@ -1,2 +1,2 @@
 # MainProject
-# this is delta main project
+This is a main project 
