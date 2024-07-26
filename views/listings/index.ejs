@@ -1,15 +1,18 @@
 <% layout("/layouts/boilerplate") %>
 <style>
-    #filters{
+     #filters{
         margin-top: 1rem;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap; /* Change to nowrap to prevent wrapping */
         align-items: center;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
     }
     .filter{
         text-align: center;
         margin-right: 2rem;
         opacity: 0.7;
+        flex: 0 0 auto; /* Prevent flex items from shrinking or growing */
     }
     .filter:hover{
         opacity: 1;
@@ -29,6 +32,12 @@
         margin-left: 2rem;
         display: flex;
         align-items: center;
+        flex: 0 0 auto; /* Prevent flex item from shrinking or growing */
+    }
+    @media (max-width: 768px) {
+        #filters{
+            flex-wrap: nowrap; /* Ensure nowrap in mobile view */
+        }
     }
 </style>
 <body>
