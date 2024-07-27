@@ -1,7 +1,7 @@
 const Listing = require("../models/listing.js");
 
 module.exports.index = async (req, res) => {
-     const { search } = req.query;
+    const { search } = req.query;
     let allListings;
     if (search) {
         const regex = new RegExp(escapeRegex(search), 'gi'); // 'gi' for case-insensitive and global search
@@ -9,7 +9,7 @@ module.exports.index = async (req, res) => {
     } else {
         allListings = await Listing.find({});
     }
-    res.render("listings/index.ejs", { allListings });
+    res.render("listings/index.ejs", { allListings, search }); 
 };
 
 // Escape special characters in the search query
