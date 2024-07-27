@@ -1,9 +1,86 @@
 <% layout("/layouts/boilerplate") %>  <!-- <--ejsmate -->
+<style>
+    .listing-title {
+        text-align: center;
+        margin-top: 1rem;
+        font-weight: bold;
+        font-size: 2rem;
+    }
+
+    .show-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .show-img {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        object-fit: cover;
+        height: 300px;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-text {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-dark {
+        border-radius: 25px;
+        padding: 0.5rem 1.5rem;
+        background-color: #343a40;
+        color: #fff;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn-dark:hover {
+        background-color: #495057;
+        color: #fff;
+    }
+
+    .review-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s;
+    }
+
+    .review-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .starability-result::before {
+        content: attr(data-rating) ' stars';
+        color: #ffc107;
+    }
+
+    .form-control {
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+    }
+
+    .btn-outline-dark {
+        border-radius: 25px;
+        padding: 0.5rem 1.5rem;
+    }
+
+    hr {
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+
 <body>
     <div class="container mt-3">
         <div class="row">
             <div class="col-12">
-                <h3 class="text-center"><%= listing.title %></h3>
+                <h3 class="listing-title"><%= listing.title %></h3>
             </div>
         </div>
         <div class="row justify-content-center">
@@ -63,12 +140,11 @@
 
                 <p class="text-center"><b>All Reviews</b></p>
                 <div class="row justify-content-center">
-                <% for( review of listing.reviews) { %>
-                    <div class="card col-lg-5 col-md-6 col-sm-10 ms-3 mb-3">
+                <% for(review of listing.reviews) { %>
+                    <div class="card col-lg-5 col-md-6 col-sm-10 review-card">
                         <div class="card-body">
                             <h5 class="card-title">@<%= review.author.username %></h5>
-                            <p class="starability-result card-text" data-rating="<%= review.rating %>">  
-                            </p>
+                            <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
                             <p class="card-text"><%= review.comment %></p>
                         </div>
                         <form class="mb-3 mt-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
