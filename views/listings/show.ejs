@@ -74,6 +74,22 @@
     hr {
         border-top: 1px solid #dee2e6;
     }
+
+    .starability-slot label {
+        color: #ccc;
+        font-size: 2rem;
+        padding: 0.1rem;
+        cursor: pointer;
+    }
+
+    .starability-slot input[type="radio"]:checked ~ label {
+        color: #ffc107;
+    }
+
+    .starability-slot label:hover,
+    .starability-slot label:hover ~ label {
+        color: #ffc107;
+    }
 </style>
 
 <body>
