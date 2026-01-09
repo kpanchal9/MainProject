@@ -1,158 +1,1992 @@
-<% layout("/layouts/boilerplate") %>  <!-- <--ejsmate -->
+<% layout("/layouts/boilerplate") %>
+
 <style>
-    .listing-title {
-        text-align: center;
-        margin-top: 1rem;
-        font-weight: bold;
-        font-size: 2rem;
+    :root {
+        --primary-color: #FF385C;
+        --primary-hover: #E31C5F;
+        --text-primary: #222222;
+        --text-secondary: #717171;
+        --text-light: #B0B0B0;
+        --border-color: #DDDDDD;
+        --border-light: #EBEBEB;
+        --background-gray: #F7F7F7;
+        --success-color: #008A05;
+        --card-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .show-card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .show-img {
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-        object-fit: cover;
-        height: 300px;
-    }
-
-    .card-body {
+    /* ===== PAGE LAYOUT ===== */
+    .listing-page {
+        max-width: 1120px;
+        margin: 0 auto;
         padding: 1.5rem;
     }
 
-    .card-text {
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-    }
-
-    .btn-dark {
-        border-radius: 25px;
-        padding: 0.5rem 1.5rem;
-        background-color: #343a40;
-        color: #fff;
-        border: none;
-        transition: background-color 0.3s;
-    }
-
-    .btn-dark:hover {
-        background-color: #495057;
-        color: #fff;
-    }
-
-    .review-card {
-        border: none;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* ===== HEADER SECTION ===== */
+    .listing-header {
         margin-bottom: 1.5rem;
-        transition: transform 0.2s;
+        animation: fadeInDown 0.5s ease;
     }
 
-    .review-card:hover {
-        transform: translateY(-5px);
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    .starability-result::before {
-        color: #ffc107;
+    .listing-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
     }
 
-    .form-control {
-        border-radius: 25px;
+    .listing-subtitle {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .listing-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 600;
+    }
+
+    .listing-rating i {
+        color: var(--text-primary);
+        font-size: 0.85rem;
+    }
+
+    .listing-reviews-count {
+        color: var(--text-secondary);
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .listing-reviews-count:hover {
+        color: var(--text-primary);
+    }
+
+    .subtitle-dot {
+        color: var(--text-secondary);
+    }
+
+    .listing-location {
+        font-weight: 600;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .listing-location:hover {
+        color: var(--text-secondary);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        margin-left: auto;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        background: transparent;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background var(--transition-fast);
+        text-decoration: underline;
+    }
+
+    .action-btn:hover {
+        background: var(--background-gray);
+    }
+
+    .action-btn i {
+        font-size: 1rem;
+    }
+
+    /* ===== IMAGE GALLERY ===== */
+    .image-gallery {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: repeat(2, 200px);
+        gap: 8px;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .gallery-item:first-child {
+        grid-row: span 2;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--transition-medium);
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .gallery-item::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0);
+        transition: background var(--transition-fast);
+    }
+
+    .gallery-item:hover::after {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .show-all-photos {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: white;
+        border: 1px solid var(--text-primary);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        z-index: 10;
+    }
+
+    .show-all-photos:hover {
+        background: var(--background-gray);
+        transform: scale(1.02);
+    }
+
+    @media (max-width: 768px) {
+        .image-gallery {
+            grid-template-columns: 1fr;
+            grid-template-rows: 300px;
+        }
+
+        .gallery-item:not(:first-child) {
+            display: none;
+        }
+
+        .gallery-item:first-child {
+            grid-row: span 1;
+        }
+    }
+
+    /* ===== MAIN CONTENT LAYOUT ===== */
+    .listing-content {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 5rem;
+    }
+
+    @media (max-width: 992px) {
+        .listing-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    /* ===== LEFT CONTENT ===== */
+    .listing-main {
+        animation: slideInLeft 0.5s ease;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Host Section */
+    .host-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .host-info h2 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .host-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .host-avatar {
+        position: relative;
+    }
+
+    .host-avatar img,
+    .host-avatar-placeholder {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .host-avatar-placeholder {
+        background: linear-gradient(135deg, var(--text-primary), #555);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .superhost-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 24px;
+        height: 24px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        border: 2px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .superhost-badge i {
+        color: white;
+        font-size: 0.65rem;
+    }
+
+    /* Highlights */
+    .highlights-section {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .highlight-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .highlight-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .highlight-icon {
+        width: 24px;
+        display: flex;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .highlight-icon i {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+    }
+
+    .highlight-content h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .highlight-content p {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Air Cover Section */
+    .aircover-section {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .aircover-logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .aircover-logo span {
+        color: var(--text-primary);
+    }
+
+    .aircover-section p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+    }
+
+    .learn-more {
+        font-weight: 600;
+        color: var(--text-primary);
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .learn-more:hover {
+        color: var(--text-secondary);
+    }
+
+    /* Description Section */
+    .description-section {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .description-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-primary);
+    }
+
+    .description-text.truncated {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .show-more-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+        transition: color var(--transition-fast);
+    }
+
+    .show-more-btn:hover {
+        color: var(--text-secondary);
+    }
+
+    .show-more-btn i {
+        font-size: 0.75rem;
+        transition: transform var(--transition-fast);
+    }
+
+    .show-more-btn.expanded i {
+        transform: rotate(180deg);
+    }
+
+    /* Amenities Section */
+    .amenities-section {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .section-title {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+    }
+
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 576px) {
+        .amenities-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .amenity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    .amenity-item i {
+        font-size: 1.25rem;
+        width: 24px;
+        text-align: center;
+        color: var(--text-primary);
+    }
+
+    .amenity-item span {
+        font-size: 1rem;
+        color: var(--text-primary);
+    }
+
+    .amenity-item.unavailable {
+        text-decoration: line-through;
+        color: var(--text-secondary);
+    }
+
+    .amenity-item.unavailable i {
+        color: var(--text-secondary);
+    }
+
+    .show-amenities-btn {
+        margin-top: 1.5rem;
+        padding: 0.875rem 1.5rem;
+        background: white;
+        border: 1px solid var(--text-primary);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .show-amenities-btn:hover {
+        background: var(--background-gray);
+    }
+
+    /* ===== BOOKING SIDEBAR ===== */
+    .booking-sidebar {
+        animation: slideInRight 0.5s ease;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .booking-card {
+        position: sticky;
+        top: 100px;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .booking-price {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .price-amount {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .price-period {
+        font-size: 1rem;
+        color: var(--text-primary);
+    }
+
+    .booking-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.875rem;
+    }
+
+    .booking-rating i {
+        color: var(--text-primary);
+        font-size: 0.75rem;
+    }
+
+    .booking-rating span {
+        font-weight: 600;
+    }
+
+    .booking-rating .reviews-count {
+        color: var(--text-secondary);
+        text-decoration: underline;
+    }
+
+    /* Date Picker */
+    .booking-inputs {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .booking-dates {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .booking-input {
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: background var(--transition-fast);
+    }
+
+    .booking-input:first-child {
+        border-right: 1px solid var(--border-color);
+    }
+
+    .booking-input:hover {
+        background: var(--background-gray);
+    }
+
+    .booking-input label {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .booking-input span,
+    .booking-input input {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+    }
+
+    .booking-guests {
+        border-top: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    .guests-dropdown {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .guests-dropdown i {
+        font-size: 0.75rem;
+        transition: transform var(--transition-fast);
+    }
+
+    .booking-guests.active .guests-dropdown i {
+        transform: rotate(180deg);
+    }
+
+    /* Reserve Button */
+    .reserve-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(90deg, #E61E4D, #E31C5F, #D70466);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .reserve-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, #D70466, #E31C5F, #E61E4D);
+        opacity: 0;
+        transition: opacity var(--transition-fast);
+    }
+
+    .reserve-btn:hover::before {
+        opacity: 1;
+    }
+
+    .reserve-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    .reserve-btn:active {
+        transform: scale(0.98);
+    }
+
+    .booking-notice {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    /* Price Breakdown */
+    .price-breakdown {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .price-row span:first-child {
+        text-decoration: underline;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+    .price-row span:first-child:hover {
+        color: var(--text-secondary);
+    }
+
+    .price-total {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-light);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Report Link */
+    .report-listing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .report-listing:hover {
+        color: var(--text-primary);
+    }
+
+    /* ===== OWNER ACTIONS ===== */
+    .owner-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .owner-btn {
+        flex: 1;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .edit-btn {
+        background: var(--text-primary);
+        color: white;
+        border: none;
+    }
+
+    .edit-btn:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .delete-btn {
+        background: white;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+    }
+
+    .delete-btn:hover {
+        background: rgba(255, 56, 92, 0.05);
+        transform: translateY(-2px);
+    }
+
+    /* ===== REVIEWS SECTION ===== */
+    .reviews-section {
+        padding: 3rem 0;
+        border-top: 1px solid var(--border-light);
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .reviews-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .reviews-header i {
+        font-size: 1.25rem;
+    }
+
+    .reviews-header h2 {
+        font-size: 1.35rem;
+        font-weight: 600;
+    }
+
+    /* Review Stats */
+    .reviews-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem 3rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+    }
+
+    .stat-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        min-width: 100px;
+    }
+
+    .stat-bar {
+        flex: 1;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .stat-bar-fill {
+        height: 100%;
+        background: var(--text-primary);
+        border-radius: 2px;
+        transition: width 1s ease;
+    }
+
+    .stat-value {
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 24px;
+        text-align: right;
+    }
+
+    /* Review Form */
+    .review-form-section {
+        margin-bottom: 2.5rem;
+        padding: 1.5rem;
+        background: var(--background-gray);
+        border-radius: 16px;
+    }
+
+    .review-form-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    /* Star Rating Input */
+    .star-rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 0.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .star-rating-input input {
+        display: none;
+    }
+
+    .star-rating-input label {
+        font-size: 1.75rem;
+        color: var(--border-color);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .star-rating-input label:hover,
+    .star-rating-input label:hover ~ label,
+    .star-rating-input input:checked ~ label {
+        color: #FFB400;
+        transform: scale(1.1);
+    }
+
+    .star-rating-input label:active {
+        transform: scale(0.95);
+    }
+
+    /* Comment Textarea */
+    .comment-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        transition: all var(--transition-fast);
+    }
+
+    .comment-input:focus {
+        outline: none;
+        border-color: var(--text-primary);
+        box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.1);
+    }
+
+    .submit-review-btn {
+        margin-top: 1rem;
+        padding: 0.875rem 1.5rem;
+        background: var(--text-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .submit-review-btn:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .submit-review-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Reviews Grid */
+    .reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .reviews-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Individual Review Card */
+    .review-card {
+        animation: fadeInUp 0.5s ease;
+        animation-fill-mode: both;
+    }
+
+    .review-card:nth-child(1) { animation-delay: 0.1s; }
+    .review-card:nth-child(2) { animation-delay: 0.15s; }
+    .review-card:nth-child(3) { animation-delay: 0.2s; }
+    .review-card:nth-child(4) { animation-delay: 0.25s; }
+    .review-card:nth-child(5) { animation-delay: 0.3s; }
+    .review-card:nth-child(6) { animation-delay: 0.35s; }
+
+    .review-header {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .reviewer-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .reviewer-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .reviewer-info p {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .review-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-stars {
+        display: flex;
+        gap: 2px;
+    }
+
+    .review-stars i {
+        font-size: 0.75rem;
+        color: var(--text-primary);
+    }
+
+    .review-date {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .review-text {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--text-primary);
+    }
+
+    .review-text.truncated {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .review-show-more {
+        margin-top: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 0.95rem;
+    }
+
+    .review-actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .review-delete-btn {
         padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .btn-outline-dark {
-        border-radius: 25px;
-        padding: 0.5rem 1.5rem;
+    .review-delete-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
     }
 
-    hr {
-        border-top: 1px solid #dee2e6;
+    /* Show All Reviews Button */
+    .show-all-reviews-btn {
+        margin-top: 2rem;
+        padding: 0.875rem 1.5rem;
+        background: white;
+        border: 1px solid var(--text-primary);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
     }
+
+    .show-all-reviews-btn:hover {
+        background: var(--background-gray);
+    }
+
+    /* ===== LOCATION SECTION ===== */
+    .location-section {
+        padding: 3rem 0;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .location-section .section-title {
+        margin-bottom: 1.5rem;
+    }
+
+    .map-placeholder {
+        width: 100%;
+        height: 400px;
+        background: var(--background-gray);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .map-placeholder i {
+        font-size: 3rem;
+    }
+
+    .location-details {
+        margin-top: 1.5rem;
+    }
+
+    .location-details h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .location-details p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    /* ===== HOST DETAILED SECTION ===== */
+    .host-detailed-section {
+        padding: 3rem 0;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .host-profile {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .host-profile-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--text-primary), #555);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .host-profile-info h3 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .host-joined {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .host-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .host-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .host-stat i {
+        font-size: 1rem;
+    }
+
+    .contact-host-btn {
+        padding: 0.875rem 1.5rem;
+        background: white;
+        border: 1px solid var(--text-primary);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .contact-host-btn:hover {
+        background: var(--background-gray);
+    }
+
+    /* ===== IMAGE LIGHTBOX ===== */
+    .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-medium);
+    }
+
+    .lightbox.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background var(--transition-fast);
+    }
+
+    .lightbox-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .lightbox-image {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        border-radius: 8px;
+        transform: scale(0.95);
+        transition: transform var(--transition-medium);
+    }
+
+    .lightbox.active .lightbox-image {
+        transform: scale(1);
+    }
+
+    /* ===== MOBILE BOOKING BAR ===== */
+    .mobile-booking-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid var(--border-color);
+        padding: 1rem;
+        display: none;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .mobile-booking-bar {
+            display: flex;
+        }
+
+        .booking-sidebar {
+            display: none;
+        }
+
+        body {
+            padding-bottom: 80px;
+        }
+    }
+
+    .mobile-price-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-price {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .mobile-dates {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-decoration: underline;
+    }
+
+    .mobile-reserve-btn {
+        padding: 0.875rem 1.5rem;
+        background: linear-gradient(90deg, #E61E4D, #E31C5F, #D70466);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* ===== SCROLLBAR STYLING ===== */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--background-gray);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-secondary);
+    }
+
 </style>
 
 <body>
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="listing-title"><%= listing.title %></h3>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="card col-lg-6 col-md-8 col-sm-10 show-card listing-card">
-                <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
-                <div class="card-body">
-                    <p class="card-text">Owned By <i><%= listing.owner.username %></i></p>
-                    <p class="card-text"><%= listing.description %></p>   
-                    <p class="card-text">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
-                    <p class="card-text"><%= listing.location %></p>
-                    <p class="card-text"><%= listing.country %></p>
-                </div> 
-
-                <% if (currUser && currUser._id.equals(listing.owner._id)) { %>
-                <div class="d-flex justify-content-between px-3 mb-3">
-                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">Edit</a>
-                    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-                        <button class="btn btn-dark">Delete</button>
-                    </form>
+    <div class="listing-page">
+        <!-- Header -->
+        <div class="listing-header">
+            <h1 class="listing-title"><%= listing.title %></h1>
+            <div class="listing-subtitle">
+                <div class="listing-rating">
+                    <i class="fa-solid fa-star"></i>
+                    <span>4.92</span>
                 </div>
-                <% } %>
+                <a href="#reviews" class="listing-reviews-count">
+                    <%= listing.reviews ? listing.reviews.length : 0 %> reviews
+                </a>
+                <span class="subtitle-dot">·</span>
+                <span class="listing-location"><%= listing.location %>, <%= listing.country %></span>
+                
+                <div class="header-actions">
+                    <button class="action-btn" onclick="shareListing()">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        Share
+                    </button>
+                    <button class="action-btn" onclick="saveListing(this)">
+                        <i class="fa-regular fa-heart"></i>
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-sm-12 mb-3">
-                <hr>
-                <% if (currUser) { %>
-                <h4 class="text-center">Leave a Review</h4>
-                <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
-                    <div class="mb-3 mt-3">
-                        <label for="rating" class="form-label">Rating</label>
-                        <fieldset class="starability-slot">
-                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                            <label for="first-rate1" title="Terrible">1 star</label>
-                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                            <label for="first-rate2" title="Not good">2 stars</label>
-                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                            <label for="first-rate3" title="Average">3 stars</label>
-                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                            <label for="first-rate4" title="Very good">4 stars</label>
-                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                            <label for="first-rate5" title="Amazing">5 stars</label>
-                        </fieldset>
-                    </div>
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+            <div class="gallery-item" onclick="openLightbox('<%= listing.image.url %>')">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+            </div>
+            <div class="gallery-item" onclick="openLightbox('<%= listing.image.url %>')">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+            </div>
+            <div class="gallery-item" onclick="openLightbox('<%= listing.image.url %>')">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+            </div>
+            <div class="gallery-item" onclick="openLightbox('<%= listing.image.url %>')">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+            </div>
+            <div class="gallery-item" onclick="openLightbox('<%= listing.image.url %>')">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+                <button class="show-all-photos">
+                    <i class="fa-solid fa-grip"></i>
+                    Show all photos
+                </button>
+            </div>
+        </div>
 
-                    <div class="mb-3 mt-3">
-                        <label for="comment" class="form-label">Comment</label>
-                        <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
-                        <div class="invalid-feedback">Please add some Comments for review</div>
-                    </div>
-                    <button class="btn btn-outline-dark">Submit</button>
-                </form>
-                <hr>
-                <% } %>
-
-                <p class="text-center"><b>All Reviews</b></p>
-                <div class="row justify-content-center">
-                <% for(review of listing.reviews) { %>
-                    <div class="card col-lg-5 col-md-6 col-sm-10 review-card">
-                        <div class="card-body">
-                            <h5 class="card-title">@<%= review.author.username %></h5>
-                            <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
-                            <p class="card-text"><%= review.comment %></p>
+        <!-- Main Content -->
+        <div class="listing-content">
+            <!-- Left Column -->
+            <div class="listing-main">
+                <!-- Host Section -->
+                <div class="host-section">
+                    <div class="host-info">
+                        <h2>Entire place hosted by <%= listing.owner.username %></h2>
+                        <div class="host-details">
+                            <span>4 guests</span>
+                            <span>·</span>
+                            <span>2 bedrooms</span>
+                            <span>·</span>
+                            <span>2 beds</span>
+                            <span>·</span>
+                            <span>1 bath</span>
                         </div>
-                        <form class="mb-3 mt-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
-                            <button class="btn btn-sm btn-dark">Delete</button>
+                    </div>
+                    <div class="host-avatar">
+                        <div class="host-avatar-placeholder">
+                            <%= listing.owner.username.charAt(0).toUpperCase() %>
+                        </div>
+                        <span class="superhost-badge">
+                            <i class="fa-solid fa-medal"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Highlights -->
+                <div class="highlights-section">
+                    <div class="highlight-item">
+                        <div class="highlight-icon">
+                            <i class="fa-solid fa-door-open"></i>
+                        </div>
+                        <div class="highlight-content">
+                            <h3>Self check-in</h3>
+                            <p>Check yourself in with the keypad.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon">
+                            <i class="fa-solid fa-medal"></i>
+                        </div>
+                        <div class="highlight-content">
+                            <h3><%= listing.owner.username %> is a Superhost</h3>
+                            <p>Superhosts are experienced, highly rated hosts who are committed to providing great stays.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon">
+                            <i class="fa-solid fa-calendar"></i>
+                        </div>
+                        <div class="highlight-content">
+                            <h3>Free cancellation for 48 hours</h3>
+                            <p>Get a full refund if you change your mind.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Air Cover -->
+                <div class="aircover-section">
+                    <div class="aircover-logo">
+                        air<span>cover</span>
+                    </div>
+                    <p>Every booking includes free protection from Host cancellations, listing inaccuracies, and other issues like trouble checking in.</p>
+                    <a class="learn-more">Learn more</a>
+                </div>
+
+                <!-- Description -->
+                <div class="description-section">
+                    <p class="description-text" id="descriptionText">
+                        <%= listing.description %>
+                        <br><br>
+                        Experience the perfect getaway at this beautiful property. Located in the heart of <%= listing.location %>, this space offers everything you need for a comfortable and memorable stay. Whether you're traveling for business or pleasure, you'll find this space to be the perfect home away from home.
+                    </p>
+                    <button class="show-more-btn" onclick="toggleDescription()">
+                        Show more <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Amenities -->
+                <div class="amenities-section">
+                    <h2 class="section-title">What this place offers</h2>
+                    <div class="amenities-grid">
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-mountain-sun"></i>
+                            <span>Mountain view</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-kitchen-set"></i>
+                            <span>Kitchen</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-wifi"></i>
+                            <span>Fast wifi – 241 Mbps</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-car"></i>
+                            <span>Free parking on premises</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-person-swimming"></i>
+                            <span>Private pool</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-tv"></i>
+                            <span>55" 4K TV with Netflix</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-snowflake"></i>
+                            <span>Air conditioning</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fa-solid fa-shirt"></i>
+                            <span>Washer & Dryer</span>
+                        </div>
+                        <div class="amenity-item unavailable">
+                            <i class="fa-solid fa-smoking"></i>
+                            <span>Smoking allowed</span>
+                        </div>
+                        <div class="amenity-item unavailable">
+                            <i class="fa-solid fa-paw"></i>
+                            <span>Pets allowed</span>
+                        </div>
+                    </div>
+                    <button class="show-amenities-btn">Show all 42 amenities</button>
+                </div>
+            </div>
+
+            <!-- Right Column - Booking Card -->
+            <div class="booking-sidebar">
+                <div class="booking-card">
+                    <div class="booking-price">
+                        <span class="price-amount">₹<%= listing.price.toLocaleString("en-IN") %></span>
+                        <span class="price-period">night</span>
+                        <div class="booking-rating" style="margin-left: auto;">
+                            <i class="fa-solid fa-star"></i>
+                            <span>4.92</span>
+                            <span class="subtitle-dot">·</span>
+                            <span class="reviews-count"><%= listing.reviews ? listing.reviews.length : 0 %> reviews</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-inputs">
+                        <div class="booking-dates">
+                            <div class="booking-input">
+                                <label>CHECK-IN</label>
+                                <input type="date" placeholder="Add date">
+                            </div>
+                            <div class="booking-input">
+                                <label>CHECKOUT</label>
+                                <input type="date" placeholder="Add date">
+                            </div>
+                        </div>
+                        <div class="booking-input booking-guests" onclick="toggleGuestsDropdown()">
+                            <div class="guests-dropdown">
+                                <div>
+                                    <label>GUESTS</label>
+                                    <span>1 guest</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="reserve-btn">
+                        <span>Reserve</span>
+                    </button>
+
+                    <p class="booking-notice">You won't be charged yet</p>
+
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>₹<%= listing.price.toLocaleString("en-IN") %> x 5 nights</span>
+                            <span>₹<%= (listing.price * 5).toLocaleString("en-IN") %></span>
+                        </div>
+                        <div class="price-row">
+                            <span>Cleaning fee</span>
+                            <span>₹1,500</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Airbnb service fee</span>
+                            <span>₹<%= Math.round(listing.price * 5 * 0.14).toLocaleString("en-IN") %></span>
+                        </div>
+                        <div class="price-total">
+                            <span>Total before taxes</span>
+                            <span>₹<%= (listing.price * 5 + 1500 + Math.round(listing.price * 5 * 0.14)).toLocaleString("en-IN") %></span>
+                        </div>
+                    </div>
+
+                    <% if (currUser && currUser._id.equals(listing.owner._id)) { %>
+                    <div class="owner-actions">
+                        <a href="/listings/<%= listing._id %>/edit" class="owner-btn edit-btn">
+                            <i class="fa-solid fa-pen"></i>
+                            Edit
+                        </a>
+                        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" style="flex: 1;">
+                            <button type="submit" class="owner-btn delete-btn" style="width: 100%;">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete
+                            </button>
                         </form>
                     </div>
-                <% } %>
+                    <% } %>
+
+                    <div class="report-listing">
+                        <i class="fa-solid fa-flag"></i>
+                        <span>Report this listing</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Reviews Section -->
+        <section class="reviews-section" id="reviews">
+            <div class="reviews-header">
+                <i class="fa-solid fa-star"></i>
+                <h2>4.92 · <%= listing.reviews ? listing.reviews.length : 0 %> reviews</h2>
+            </div>
+
+            <!-- Review Stats -->
+            <div class="reviews-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Cleanliness</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 96%;"></div>
+                    </div>
+                    <span class="stat-value">4.8</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Accuracy</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <span class="stat-value">5.0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Communication</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <span class="stat-value">5.0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Location</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 94%;"></div>
+                    </div>
+                    <span class="stat-value">4.7</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Check-in</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <span class="stat-value">5.0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Value</span>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 92%;"></div>
+                    </div>
+                    <span class="stat-value">4.6</span>
+                </div>
+            </div>
+
+            <% if (currUser) { %>
+            <!-- Review Form -->
+            <div class="review-form-section">
+                <h3 class="review-form-title">Share your experience</h3>
+                <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+                    <div class="star-rating-input">
+                        <input type="radio" id="star5" name="review[rating]" value="5">
+                        <label for="star5"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star4" name="review[rating]" value="4">
+                        <label for="star4"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star3" name="review[rating]" value="3">
+                        <label for="star3"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star2" name="review[rating]" value="2">
+                        <label for="star2"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star1" name="review[rating]" value="1" checked>
+                        <label for="star1"><i class="fa-solid fa-star"></i></label>
+                    </div>
+                    
+                    <textarea 
+                        name="review[comment]" 
+                        class="comment-input" 
+                        placeholder="Tell others about your experience at this place. What did you love? What could be improved?"
+                        required
+                    ></textarea>
+                    <div class="invalid-feedback">Please add some comments for your review</div>
+                    
+                    <button type="submit" class="submit-review-btn">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+            <% } %>
+
+            <!-- Reviews Grid -->
+            <div class="reviews-grid">
+                <% if (listing.reviews && listing.reviews.length > 0) { %>
+                    <% for(let review of listing.reviews) { %>
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-avatar">
+                                <%= review.author.username.charAt(0).toUpperCase() %>
+                            </div>
+                            <div class="reviewer-info">
+                                <h4><%= review.author.username %></h4>
+                                <p>Guest</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">
+                                <% for(let i = 0; i < review.rating; i++) { %>
+                                    <i class="fa-solid fa-star"></i>
+                                <% } %>
+                                <% for(let i = review.rating; i < 5; i++) { %>
+                                    <i class="fa-regular fa-star" style="color: var(--border-color);"></i>
+                                <% } %>
+                            </div>
+                            <span class="review-date">· Recently</span>
+                        </div>
+                        <p class="review-text"><%= review.comment %></p>
+                        
+                        <% if (currUser && (currUser._id.equals(review.author._id) || currUser._id.equals(listing.owner._id))) { %>
+                        <div class="review-actions">
+                            <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                <button type="submit" class="review-delete-btn">
+                                    <i class="fa-solid fa-trash"></i>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% } %>
+                <% } else { %>
+                    <div style="grid-column: span 2; text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        <i class="fa-regular fa-comment" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <p>No reviews yet. Be the first to review!</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <% if (listing.reviews && listing.reviews.length > 6) { %>
+            <button class="show-all-reviews-btn">
+                Show all <%= listing.reviews.length %> reviews
+            </button>
+            <% } %>
+        </section>
+
+        <!-- Location Section -->
+        <section class="location-section">
+            <h2 class="section-title">Where you'll be</h2>
+            <div class="map-placeholder">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <p><%= listing.location %>, <%= listing.country %></p>
+            </div>
+            <div class="location-details">
+                <h4><%= listing.location %>, <%= listing.country %></h4>
+                <p>
+                    This property is located in a beautiful area with easy access to local attractions, 
+                    restaurants, and public transportation. The neighborhood is known for its safety 
+                    and friendly community.
+                </p>
+            </div>
+        </section>
+
+        <!-- Host Detailed Section -->
+        <section class="host-detailed-section">
+            <div class="host-profile">
+                <div class="host-profile-avatar">
+                    <%= listing.owner.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="host-profile-info">
+                    <h3>Hosted by <%= listing.owner.username %></h3>
+                    <p class="host-joined">Joined in 2023</p>
+                </div>
+            </div>
+            <div class="host-stats">
+                <div class="host-stat">
+                    <i class="fa-solid fa-star"></i>
+                    <span><%= listing.reviews ? listing.reviews.length : 0 %> Reviews</span>
+                </div>
+                <div class="host-stat">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <span>Identity verified</span>
+                </div>
+                <div class="host-stat">
+                    <i class="fa-solid fa-medal"></i>
+                    <span>Superhost</span>
+                </div>
+            </div>
+            <button class="contact-host-btn">Contact Host</button>
+        </section>
     </div>
+
+    <!-- Image Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img src="" alt="Listing image" class="lightbox-image" id="lightboxImage" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Mobile Booking Bar -->
+    <div class="mobile-booking-bar">
+        <div class="mobile-price-info">
+            <span class="mobile-price">₹<%= listing.price.toLocaleString("en-IN") %> <span style="font-weight: 400; font-size: 0.9rem;">night</span></span>
+            <span class="mobile-dates">Oct 15 - 20</span>
+        </div>
+        <button class="mobile-reserve-btn">Reserve</button>
+    </div>
+
+    <script>
+        // Toggle description
+        function toggleDescription() {
+            const text = document.getElementById('descriptionText');
+            const btn = document.querySelector('.show-more-btn');
+            
+            text.classList.toggle('truncated');
+            btn.classList.toggle('expanded');
+            
+            if (btn.classList.contains('expanded')) {
+                btn.innerHTML = 'Show less <i class="fa-solid fa-chevron-up"></i>';
+            } else {
+                btn.innerHTML = 'Show more <i class="fa-solid fa-chevron-right"></i>';
+            }
+        }
+
+        // Lightbox functionality
+        function openLightbox(imageSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            
+            lightboxImage.src = imageSrc;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close lightbox with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // Share functionality
+        function shareListing() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '<%= listing.title %>',
+                    text: 'Check out this amazing place on Wanderlust!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                showToast('Link copied to clipboard!');
+            }
+        }
+
+        // Save/wishlist functionality
+        function saveListing(btn) {
+            const icon = btn.querySelector('i');
+            
+            if (icon.classList.contains('fa-regular')) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                icon.style.color = 'var(--primary-color)';
+                showToast('Saved to wishlist');
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                icon.style.color = '';
+                showToast('Removed from wishlist');
+            }
+            
+            // Add heart animation
+            icon.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Toggle guests dropdown
+        function toggleGuestsDropdown() {
+            const dropdown = document.querySelector('.booking-guests');
+            dropdown.classList.toggle('active');
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                z-index: 3000;
+                animation: toastIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Add toast animations
+        const toastStyles = document.createElement('style');
+        toastStyles.textContent = `
+            @keyframes toastIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @keyframes toastOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+            }
+        `;
+        document.head.appendChild(toastStyles);
+
+        // Animate review stat bars on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const statBarsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.stat-bar-fill');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.style.width;
+                    });
+                }
+            });
+        }, observerOptions);
+
+        const reviewsStats = document.querySelector('.reviews-stats');
+        if (reviewsStats) {
+            statBarsObserver.observe(reviewsStats);
+        }
+
+        // Smooth scroll to reviews
+        document.querySelectorAll('a[href="#reviews"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelector('#reviews').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+        }
+
+        // Delete confirmation
+        document.querySelectorAll('.delete-btn, .review-delete-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!confirm('Are you sure you want to delete this?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
