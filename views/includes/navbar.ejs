@@ -1,62 +1,525 @@
 <style>
-  .btn-search{
-    background-color: #fe424d;
-    color: #fff;
-    border-radius: 25px;
-    padding: 0 1rem 0 1rem;
-  }
-  .btn-search:hover{
-    background-color: #fe424d;
-    color: #fff;
-  }
-  .btn-search i {
-    display: inline;
-    margin-right: 0.5rem;
-  }
-  .search-inp{
-    border-radius: 25px;
-    padding: 0.5rem 3rem 0.5rem 3rem;
-    font-size: 1rem;
-  }
- .navbar-collapse {
-    background-color: #fff; /* Set a background color for the collapsed menu */
-  }
-  .navbar-toggler {
-    border: none;
-    outline: none;
-  }
-  .navbar-toggler-icon {
-    color: #000; /* Set a color for the toggler icon */
-  }
+    :root {
+        --primary-color: #FF385C;
+        --primary-hover: #E31C5F;
+        --text-primary: #222222;
+        --text-secondary: #717171;
+        --border-color: #DDDDDD;
+        --background-gray: #F7F7F7;
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
+    * {
+        box-sizing: border-box;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar-main {
+        background: white;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.875rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* High z-index for navbar */
+        transition: all var(--transition-medium);
+        width: 100%;
+    }
+
+    .navbar-main.scrolled {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .navbar-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        width: 100%;
+    }
+
+    .navbar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    /* Logo */
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: transform var(--transition-fast);
+        flex-shrink: 0;
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.02);
+        color: var(--primary-color);
+    }
+
+    .navbar-brand i {
+        font-size: 1.75rem;
+    }
+
+    .brand-text {
+        color: var(--primary-color);
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        font-size: 1.25rem;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        max-width: 560px;
+        margin: 0 1rem;
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 40px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all var(--transition-medium);
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .search-bar:hover,
+    .search-bar:focus-within {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-input-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+    }
+
+    .search-input-wrapper i {
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        background: transparent;
+        min-width: 0;
+    }
+
+    .search-input::placeholder {
+        color: var(--text-secondary);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin: 0.35rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast);
+        flex-shrink: 0;
+    }
+
+    .search-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(255, 56, 92, 0.4);
+    }
+
+    .search-btn i {
+        font-size: 0.875rem;
+    }
+
+    /* ===== NAV LINKS ===== */
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .nav-link-item {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        text-decoration: none;
+        border-radius: 22px;
+        transition: all var(--transition-fast);
+        white-space: nowrap;
+    }
+
+    .nav-link-item:hover {
+        background: var(--background-gray);
+        color: var(--text-primary);
+    }
+
+    /* ===== USER MENU - FIXED Z-INDEX ===== */
+    .user-menu-wrapper {
+        position: relative;
+        z-index: 1001; /* Higher than navbar */
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 0.3rem 0.3rem 0.3rem 0.625rem;
+        border: 1px solid var(--border-color);
+        border-radius: 22px;
+        background: white;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        position: relative;
+        z-index: 1002;
+    }
+
+    .user-menu:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .user-menu-icon {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--text-secondary), #333);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.875rem;
+    }
+
+    .user-avatar.logged-in {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    }
+
+    /* ===== DROPDOWN MENU - FIXED Z-INDEX ===== */
+    .dropdown-menu-custom {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        min-width: 220px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        padding: 0.5rem 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(0.95);
+        transition: all var(--transition-fast);
+        z-index: 9999; /* Very high z-index to appear above everything */
+        pointer-events: none;
+    }
+
+    .user-menu-wrapper.active .dropdown-menu-custom {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    .dropdown-item {
+        display: block;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: background var(--transition-fast);
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background: var(--background-gray);
+        color: var(--text-primary);
+    }
+
+    .dropdown-item.bold {
+        font-weight: 600;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: var(--border-color);
+        margin: 0.5rem 0;
+    }
+
+    /* ===== DROPDOWN OVERLAY (Optional - helps with closing) ===== */
+    .dropdown-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: none;
+    }
+
+    .user-menu-wrapper.active .dropdown-overlay {
+        display: block;
+    }
+
+    /* ===== MOBILE STYLES ===== */
+    @media (max-width: 992px) {
+        .navbar-container {
+            padding: 0 1rem;
+        }
+
+        .search-container {
+            margin: 0 0.5rem;
+        }
+
+        .nav-link-item.hide-mobile {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar-main {
+            padding: 0.75rem 0;
+        }
+
+        .navbar-container {
+            padding: 0 0.75rem;
+        }
+
+        .navbar-content {
+            gap: 0.5rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+        }
+
+        .navbar-brand i {
+            font-size: 1.5rem;
+        }
+
+        .brand-text {
+            display: none;
+        }
+
+        .search-container {
+            flex: 1;
+            margin: 0 0.5rem;
+            max-width: none;
+        }
+
+        .search-input-wrapper {
+            padding: 0.5rem 0.75rem;
+        }
+
+        .search-input {
+            font-size: 0.85rem;
+        }
+
+        .search-btn {
+            width: 32px;
+            height: 32px;
+            margin: 0.25rem;
+        }
+
+        .nav-links {
+            gap: 0;
+        }
+
+        .nav-link-item {
+            display: none;
+        }
+
+        .user-menu {
+            padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .user-menu-icon {
+            font-size: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+
+        /* Mobile dropdown positioning */
+        .dropdown-menu-custom {
+            right: 0;
+            min-width: 200px;
+            max-width: calc(100vw - 1.5rem);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar-container {
+            padding: 0 0.5rem;
+        }
+
+        .search-input-wrapper {
+            padding: 0.5rem;
+        }
+
+        .search-input-wrapper i {
+            font-size: 0.875rem;
+        }
+
+        .search-input {
+            font-size: 0.8rem;
+        }
+
+        .search-input::placeholder {
+            font-size: 0.8rem;
+        }
+
+        .dropdown-menu-custom {
+            right: -0.5rem;
+            min-width: 180px;
+        }
+    }
 </style>
 
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listings">Explore</a>
-      </div>
-      <div class="navbar-nav ms-auto">
-        <form class="d-flex" role="search" action="/listings" method="GET">
-            <input class="form-control me-2 search-inp" type="search" name="search" placeholder="Search destinations" value="<%= typeof search !== 'undefined' ? search : '' %>">
-            <button class="btn btn-search" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
-        </form>
-      </div>
-      <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Airbnb your home</a>
-        <% if (!currUser) { %>
-          <a class="nav-link" href="/singup"><b>Sign Up</b></a>
-          <a class="nav-link" href="/login"><b>Log in</b></a>
-          <% } %>
-            <% if (currUser) { %>
-              <a class="nav-link" href="/logout"><b>Log out</b></a>
-              <% } %>
-      </div>
+<nav class="navbar-main" id="navbar">
+    <div class="navbar-container">
+        <div class="navbar-content">
+            <!-- Logo -->
+            <a href="/listings" class="navbar-brand">
+                <i class="fa-regular fa-compass"></i>
+                <span class="brand-text">wanderlust</span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <form class="search-bar" action="/listings" method="GET">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            class="search-input" 
+                            placeholder="Search destinations..."
+                            value="<%= typeof search !== 'undefined' ? search : '' %>"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button type="submit" class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Nav Links -->
+            <div class="nav-links">
+                <a href="/listings/new" class="nav-link-item hide-mobile">
+                    Airbnb your home
+                </a>
+
+                <div class="user-menu-wrapper" id="userMenuWrapper">
+                    <!-- Invisible overlay to close dropdown when clicking outside -->
+                    <div class="dropdown-overlay" id="dropdownOverlay"></div>
+                    
+                    <div class="user-menu" id="userMenu">
+                        <i class="fa-solid fa-bars user-menu-icon"></i>
+                        <div class="user-avatar <%= currUser ? 'logged-in' : '' %>">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu-custom" id="dropdownMenu">
+                        <% if (!currUser) { %>
+                            <a href="/signup" class="dropdown-item bold">Sign up</a>
+                            <a href="/login" class="dropdown-item">Log in</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/listings/new" class="dropdown-item">Airbnb your home</a>
+                            <a href="#" class="dropdown-item">Help Center</a>
+                        <% } else { %>
+                            <a href="#" class="dropdown-item bold">Messages</a>
+                            <a href="#" class="dropdown-item bold">Trips</a>
+                            <a href="#" class="dropdown-item bold">Wishlists</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/listings/new" class="dropdown-item">Airbnb your home</a>
+                            <a href="#" class="dropdown-item">Account</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/logout" class="dropdown-item">Log out</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
+
+<script>
+    // User Menu Toggle
+    const userMenuWrapper = document.getElementById('userMenuWrapper');
+    const userMenu = document.getElementById('userMenu');
+    const dropdownOverlay = document.getElementById('dropdownOverlay');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    
+    // Toggle dropdown on menu click
+    userMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userMenuWrapper.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking overlay
+    dropdownOverlay.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userMenuWrapper.classList.remove('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!userMenuWrapper.contains(e.target)) {
+            userMenuWrapper.classList.remove('active');
+        }
+    });
+
+    // Prevent dropdown from closing when clicking inside it
+    dropdownMenu.addEventListener('click', function(e) {
+        // Allow links to work but don't close dropdown immediately
+        // e.stopPropagation(); // Uncomment if you want dropdown to stay open on item click
+    });
+
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            userMenuWrapper.classList.remove('active');
+        }
+    });
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>
